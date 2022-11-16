@@ -1,6 +1,6 @@
 # Mongoose Footprints
 
-A mongoose plugin to log changes to MongoDB documents.
+A mongoose plugin to log changes to MongoDB documents. It was inspired by [@mimani/mongoose-diff-history](https://github.com/mimani/mongoose-diff-history) with some more improvements on top.
 
 ### Possible options for plugin
 
