@@ -1,5 +1,5 @@
 const isEqual = require('lodash.isequal');
-const AuditLog = require('./auditLogModel');
+const _Footprint = require('./footprintModel');
 
 module.exports.plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
@@ -25,7 +25,7 @@ function generatePreHook(options) {
 
     // saveEdits(this, options).then(next).catch(next); // TODO: handle errors?
 
-    if (!queryObject?.options?.auditLog) next();
+    if (!queryObject?.options?.footprint) next();
 
     await queryObject
       .find(queryObject.getFilter())
@@ -47,7 +47,7 @@ function generatePostHook() {
     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const queryObject = this;
 
-    if (!queryObject?.options?.auditLog) next();
+    if (!queryObject?.options?.footprint) next();
 
     let changesArray = [];
 
@@ -59,7 +59,7 @@ function generatePostHook() {
 
     console.log(changesArray);
 
-    await createAuditLog(
+    await createFootprint(
       queryObject,
       changesArray,
       queryObject.oldDocument.toObject(),
@@ -105,7 +105,7 @@ function getUser(queryObject, options) {
   else return 'System';
 }
 
-async function createAuditLog(
+async function createFootprint(
   queryObject,
   changesArray,
   oldDocument,
@@ -118,11 +118,11 @@ async function createAuditLog(
   const modelName = queryObject?.model?.modelName;
   const session = queryObject?.options?.session;
 
-  const previous = await AuditLog.findOne({ documentId, modelName }).sort(
-    '-version'
-  );
+  const previous = await _Footprint
+    .findOne({ documentId, modelName })
+    .sort('-version');
 
-  let newAuditLog = {
+  let newFootprint = {
     modelName,
     documentId,
     oldDocument,
@@ -135,9 +135,9 @@ async function createAuditLog(
 
   // if passing sessions in options, we have to pass document in an array
   // look at https://mongoosejs.com/docs/api.html#model_Model-create
-  if (session) newAuditLog = [newAuditLog];
+  if (session) newFootprint = [newFootprint];
 
-  await AuditLog.create(newAuditLog, session ? { session } : null);
+  await _Footprint.create(newFootprint, session ? { session } : null);
 }
 
 function isObject(object) {

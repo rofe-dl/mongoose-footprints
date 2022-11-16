@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const auditLogSchema = new mongoose.Schema(
+const footprintSchema = new mongoose.Schema(
   {
     modelName: String,
     documentId: mongoose.Schema.Types.ObjectId,
@@ -24,4 +24,4 @@ const auditLogSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('AuditLog', auditLogSchema);
+module.exports = mongoose.model('_Footprint', footprintSchema);
