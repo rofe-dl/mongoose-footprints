@@ -9,6 +9,7 @@ module.exports.plugin = (schema, options = {}) => {
   // TODO: Handle reference changes separately by checking objectID
   // TODO: Error handle the whole thing so server doesn't crash
   // TODO: Say it supports sessions and deletes if session not committed
+  // TODO: Write get methods by version, document ID, model names, type
 
   const operations = ['findOneAndUpdate', 'update', 'updateOne'];
 
@@ -24,7 +25,7 @@ function generatePreHook(options) {
 
     // saveEdits(this, options).then(next).catch(next); // TODO: handle errors?
 
-    if (queryObject?.options?.disableLogging) next();
+    if (!queryObject?.options?.auditLog) next();
 
     await queryObject
       .find(queryObject.getFilter())
@@ -46,7 +47,7 @@ function generatePostHook() {
     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const queryObject = this;
 
-    if (queryObject?.options?.disableLogging) next();
+    if (!queryObject?.options?.auditLog) next();
 
     let changesArray = [];
 
