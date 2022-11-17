@@ -1,6 +1,6 @@
 # Mongoose Footprints
 
-A mongoose plugin to log changes to MongoDB documents. It was inspired by [@mimani/mongoose-diff-history](https://github.com/mimani/mongoose-diff-history) with several changes.
+A mongoose plugin to log changes in MongoDB documents. It was inspired by [@mimani/mongoose-diff-history](https://github.com/mimani/mongoose-diff-history) with several changes on top.
 
 Currently it supports the following operations:
 
@@ -16,7 +16,7 @@ Currently it supports the following operations:
   - `Model.findOneAndDelete`
   - `Model.deleteOne`
 
-Please note, for `updateOne` and `deleteOne` methods for `document` are not supported.
+Please note that `updateOne` and `deleteOne` methods are not supported when called by documents. They will only get logged when called using the Model.
 
 ## Get Started
 
@@ -25,18 +25,19 @@ const footprints = require('mongoose-footprints');
 mySchema.plugin(footprints.plugin, options);
 ```
 
-### Plugin `options`
+### Plugin Options
 
-- `logUser`: `true` / `false ` to allow passing user who updated the document. Default is `false`.
-- `operations` : `['update', 'create', 'delete']` operations to log. Default is `['update']`
+- `logUser`: `true` / `false` to log the user who updated the document. If set to `false`, the default user
+  logged is `System`. If set to `true`, the user has to be passed in the options of the operation. Otherwise, it will be recorded as `Unknown`. Default is `false`.
+- `operations` : `['update', 'create', 'delete']` The operations that will be logged. Default is `['update']`.
 
 ### Possible options for mongoose operations
 
 ```js
-const username = req.user.username; // Strings only
+const user = req.user;
 const options = {
   footprint: true, // to use the plugin for an operation
-  user: username,
+  user: user, // user can be any data type
   session: session, // supports sessions so updates in aborted transactions won't be logged
 };
 

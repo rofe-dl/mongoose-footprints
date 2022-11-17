@@ -1,7 +1,7 @@
 const isEqual = require('lodash.isequal');
 
 function docToObject(doc) {
-  return doc.toObject({ depopulate: true });
+  return doc?.toObject({ depopulate: true });
 }
 
 function isObject(object) {

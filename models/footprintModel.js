@@ -6,9 +6,7 @@ const footprintSchema = new mongoose.Schema(
     documentId: mongoose.Schema.Types.ObjectId,
     oldDocument: {},
     updatedDocument: {},
-    user: {
-      type: String,
-    },
+    user: mongoose.Schema.Types.Mixed,
     changes: [String],
     typeOfChange: {
       type: String,
