@@ -3,29 +3,85 @@ const _Footprint = require('./footprintModel');
 
 module.exports.plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
-  // TODO: Delete many and Update many should be handled separately because the're multiple updates
+  // TODO: Delete many and Update many should be handled separately because they're multiple updates
   // TODO: Support logging document deletes, creates
   // TODO: Non existing fields will either say new field or not say anything
   // TODO: Handle reference changes separately by checking objectID
   // TODO: Error handle the whole thing so server doesn't crash
-  // TODO: Say it supports sessions and deletes if session not committed
   // TODO: Write get methods by version, document ID, model names, type
+  // TODO: Comment out console logs, write test cases for the plugin
+  // TODO: Mixed type for user
+  // TODO: footprint option in save operations through queryobject
 
-  const operations = ['findOneAndUpdate', 'update', 'updateOne'];
+  if (!options?.operations) options.operations = ['update'];
 
-  schema.pre(operations, generatePreHook(options));
-  schema.post(operations, generatePostHook());
+  const updateOperations = ['findOneAndUpdate', 'update', 'updateOne'];
+  const deleteOperations = ['findOneAndDelete', 'deleteOne'];
+
+  // Updates
+  schema.pre(updateOperations, generatePreUpdateHook(options));
+  schema.post(updateOperations, generatePostUpdateHook(options));
+
+  // Create (isNew == true) and Updates (isNew == false)
+  schema.pre('save', generatePreSaveHook(options));
+  schema.post('save', generatePostSaveHook(options));
 };
 
-function generatePreHook(options) {
+function generatePreSaveHook(options) {
+  return async function (next) {
+    // 'this' refers to Document
+    // https://mongoosejs.com/docs/middleware.html#types-of-middleware
+    const document = this;
+    if (!document.$__?.saveOptions?.footprint) return next();
+
+    if (document.isNew) {
+      if (!options?.operations?.includes['create']) {
+        return next();
+      }
+
+      document.wasNew = true;
+    } else {
+      if (!options?.operations?.includes['update']) {
+        return next();
+      }
+    }
+
+    next();
+  };
+}
+
+function generatePostSaveHook(options) {
+  return async function (doc, next) {
+    const document = this;
+    if (!document.$__?.saveOptions?.footprint) return next();
+
+    if (document.wasNew) {
+      // TODO: do what?
+      if (!options?.operations?.includes['create']) {
+        return next();
+      }
+    } else {
+      if (!options?.operations?.includes['update']) {
+        return next();
+      }
+    }
+
+    next();
+  };
+}
+
+function generatePreUpdateHook(options) {
   return async function (next) {
     // 'this' refers to Query object
     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const queryObject = this;
 
-    // saveEdits(this, options).then(next).catch(next); // TODO: handle errors?
-
-    if (!queryObject?.options?.footprint) next();
+    if (
+      !options?.operations?.includes['update'] ||
+      !queryObject?.options?.footprint
+    ) {
+      return next();
+    }
 
     await queryObject
       .find(queryObject.getFilter())
@@ -41,33 +97,40 @@ function generatePreHook(options) {
   };
 }
 
-function generatePostHook() {
+function generatePostUpdateHook(options) {
   return async function (doc, next) {
-    // 'this' refers to Query object
-    // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const queryObject = this;
 
-    if (!queryObject?.options?.footprint) next();
+    if (
+      !options?.operations?.includes['update'] ||
+      !queryObject?.options?.footprint
+    ) {
+      return next();
+    }
 
     let changesArray = [];
 
     recursiveLogObjectChanges(
       changesArray,
-      doc.toObject(),
-      queryObject.oldDocument.toObject()
+      docToObject(doc),
+      docToObject(queryObject.oldDocument)
     );
 
-    console.log(changesArray);
+    // console.log(changesArray);
 
     await createFootprint(
       queryObject,
       changesArray,
-      queryObject.oldDocument.toObject(),
-      doc.toObject()
+      docToObject(doc),
+      docToObject(queryObject.oldDocument)
     );
 
     next();
   };
+}
+
+function docToObject(doc) {
+  return doc.toObject({ depopulate: true });
 }
 
 function recursiveLogObjectChanges(
@@ -99,7 +162,7 @@ function recursiveLogObjectChanges(
 }
 
 function getUser(queryObject, options) {
-  // if User is required to log but not given, 'Unknown' is default
+  // if user is required to log but not given, 'Unknown' is default
   // if not required to log, return 'System'
   if (options?.logUser) return queryObject?.options?.user || 'Unknown';
   else return 'System';
@@ -108,11 +171,11 @@ function getUser(queryObject, options) {
 async function createFootprint(
   queryObject,
   changesArray,
-  oldDocument,
   updatedDocument,
+  oldDocument,
   type = 'Update'
 ) {
-  if (changesArray.length === 0 && type === 'Update') return;
+  if (changesArray?.length === 0 && type === 'Update') return;
 
   const documentId = updatedDocument?._id;
   const modelName = queryObject?.model?.modelName;

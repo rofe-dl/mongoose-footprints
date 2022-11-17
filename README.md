@@ -1,13 +1,32 @@
 # Mongoose Footprints
 
-A mongoose plugin to log changes to MongoDB documents. It was inspired by [@mimani/mongoose-diff-history](https://github.com/mimani/mongoose-diff-history) with some more improvements on top.
+A mongoose plugin to log changes to MongoDB documents. It was inspired by [@mimani/mongoose-diff-history](https://github.com/mimani/mongoose-diff-history) with several changes.
 
-### Possible options for plugin
+Currently it supports the following operations:
+
+- Update
+  - `findOneAndUpdate`
+  - `update`
+  - `updateOne` (for Model.updateOne(), not for document.updateOne())
+  - `save`
+- Create
+  - `create`
+  - `save`
+- Delete
+  - `findOneAndDelete`
+  - `deleteOne` (for Model.deleteOne(), not for document.deleteOne())
+
+## Get Started
 
 ```js
 const footprints = require('mongoose-footprints');
-mySchema.plugin(footprints.plugin, { logUser: true });
+mySchema.plugin(footprints.plugin, options);
 ```
+
+### Plugin `options`
+
+- `logUser`: `true` / `false ` to allow passing user who updated the document. Default is `false`.
+- `operations` : `['update', 'create', 'delete']` operations to log. Default is `['update']`
 
 ### Possible options for mongoose operations
 
