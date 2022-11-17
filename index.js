@@ -32,16 +32,21 @@ function generatePreSaveHook(options) {
     // 'this' refers to Document
     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const document = this;
-    if (!document.$__?.saveOptions?.footprint) return next();
+
+    // save options can be accessed with this.$__.saveOptions
+    // https://github.com/Automattic/mongoose/issues/7457#issuecomment-620610979
+    const saveOptions = document.$__?.saveOptions;
+    if (!saveOptions?.footprint) return next();
 
     if (document.isNew) {
-      if (!options?.operations?.includes['create']) {
+      if (!options?.operations?.includes('create')) {
         return next();
       }
 
+      document.user = getUser(saveOptions, options);
       document.wasNew = true;
     } else {
-      if (!options?.operations?.includes['update']) {
+      if (!options?.operations?.includes('update')) {
         return next();
       }
     }
@@ -53,15 +58,26 @@ function generatePreSaveHook(options) {
 function generatePostSaveHook(options) {
   return async function (doc, next) {
     const document = this;
-    if (!document.$__?.saveOptions?.footprint) return next();
+    const saveOptions = document.$__?.saveOptions;
+
+    if (!saveOptions?.footprint) return next();
 
     if (document.wasNew) {
-      // TODO: do what?
-      if (!options?.operations?.includes['create']) {
+      if (!options?.operations?.includes('create')) {
         return next();
       }
+
+      await createFootprint(
+        document.constructor.modelName,
+        [],
+        docToObject(doc),
+        null,
+        saveOptions?.session,
+        saveOptions?.user,
+        'Create'
+      );
     } else {
-      if (!options?.operations?.includes['update']) {
+      if (!options?.operations?.includes('update')) {
         return next();
       }
     }
@@ -77,7 +93,7 @@ function generatePreUpdateHook(options) {
     const queryObject = this;
 
     if (
-      !options?.operations?.includes['update'] ||
+      !options?.operations?.includes('update') ||
       !queryObject?.options?.footprint
     ) {
       return next();
@@ -91,7 +107,7 @@ function generatePreUpdateHook(options) {
         queryObject.oldDocument = oldDocument;
       });
 
-    queryObject.user = getUser(queryObject, options);
+    queryObject.user = getUser(queryObject?.options, options);
 
     next();
   };
@@ -102,7 +118,7 @@ function generatePostUpdateHook(options) {
     const queryObject = this;
 
     if (
-      !options?.operations?.includes['update'] ||
+      !options?.operations?.includes('update') ||
       !queryObject?.options?.footprint
     ) {
       return next();
@@ -119,10 +135,12 @@ function generatePostUpdateHook(options) {
     // console.log(changesArray);
 
     await createFootprint(
-      queryObject,
+      queryObject?.model?.modelName,
       changesArray,
       docToObject(doc),
-      docToObject(queryObject.oldDocument)
+      docToObject(queryObject.oldDocument),
+      queryObject?.options?.session,
+      queryObject.user
     );
 
     next();
@@ -161,25 +179,25 @@ function recursiveLogObjectChanges(
   }
 }
 
-function getUser(queryObject, options) {
+function getUser(queryObjectOptions, options) {
   // if user is required to log but not given, 'Unknown' is default
   // if not required to log, return 'System'
-  if (options?.logUser) return queryObject?.options?.user || 'Unknown';
+  if (options?.logUser) return queryObjectOptions?.user || 'Unknown';
   else return 'System';
 }
 
 async function createFootprint(
-  queryObject,
+  modelName,
   changesArray,
   updatedDocument,
   oldDocument,
+  session,
+  user,
   type = 'Update'
 ) {
   if (changesArray?.length === 0 && type === 'Update') return;
 
   const documentId = updatedDocument?._id;
-  const modelName = queryObject?.model?.modelName;
-  const session = queryObject?.options?.session;
 
   const previous = await _Footprint
     .findOne({ documentId, modelName })
@@ -190,13 +208,13 @@ async function createFootprint(
     documentId,
     oldDocument,
     updatedDocument,
-    user: queryObject.user,
+    user,
     changes: changesArray,
     typeOfChange: type,
     version: previous ? previous.version + 1 : 1,
   };
 
-  // if passing sessions in options, we have to pass document in an array
+  // if using options, we have to pass document in an array
   // look at https://mongoosejs.com/docs/api.html#model_Model-create
   if (session) newFootprint = [newFootprint];
 

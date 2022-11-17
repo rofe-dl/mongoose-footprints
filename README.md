@@ -5,16 +5,18 @@ A mongoose plugin to log changes to MongoDB documents. It was inspired by [@mima
 Currently it supports the following operations:
 
 - Update
-  - `findOneAndUpdate`
-  - `update`
-  - `updateOne` (for Model.updateOne(), not for document.updateOne())
-  - `save`
+  - `Model.findOneAndUpdate`
+  - `Model.update`
+  - `Model.updateOne`
+  - `document.save`
 - Create
-  - `create`
-  - `save`
+  - `Model.create`
+  - `document.save`
 - Delete
-  - `findOneAndDelete`
-  - `deleteOne` (for Model.deleteOne(), not for document.deleteOne())
+  - `Model.findOneAndDelete`
+  - `Model.deleteOne`
+
+Please note, for `updateOne` and `deleteOne` methods for `document` are not supported.
 
 ## Get Started
 
@@ -32,9 +34,23 @@ mySchema.plugin(footprints.plugin, options);
 
 ```js
 const username = req.user.username; // Strings only
-MyModel.findOneAndUpdate(filter, updates, {
+const options = {
   footprint: true, // to use the plugin for an operation
   user: username,
   session: session, // supports sessions so updates in aborted transactions won't be logged
-});
+};
+
+Book.findOneAndUpdate(filter, updates, options);
+
+const bookObject = {
+  name: 'Harry Potter and the Prisoner of Azkaban',
+  author: 'JK Rowling',
+};
+
+// to use create with options, the document has to be passed in an array
+// for info, check out https://mongoosejs.com/docs/api/model.html#model_Model-create
+await savedBook = Book.create([bookObject], options);
+
+savedBook.name = 'Harry Potter and the Deathly Hallows'
+savedBook.save(options);
 ```
