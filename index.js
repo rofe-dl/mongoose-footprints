@@ -11,7 +11,6 @@ module.exports.plugin = (schema, options = {}) => {
   // TODO: Write get methods by version, document ID, model names, type
   // TODO: Comment out console logs, write test cases for the plugin
   // TODO: Mixed type for user
-  // TODO: footprint option in save operations through queryobject
 
   if (!options?.operations) options.operations = ['update'];
 
@@ -43,12 +42,15 @@ function generatePreSaveHook(options) {
         return next();
       }
 
-      document.user = getUser(saveOptions, options);
       document.wasNew = true;
     } else {
       if (!options?.operations?.includes('update')) {
         return next();
       }
+
+      document.$__.oldDocument = await document.constructor.findOne({
+        _id: document._id,
+      });
     }
 
     next();
@@ -58,7 +60,7 @@ function generatePreSaveHook(options) {
 function generatePostSaveHook(options) {
   return async function (doc, next) {
     const document = this;
-    const saveOptions = document.$__?.saveOptions;
+    const saveOptions = document?.$__?.saveOptions;
 
     if (!saveOptions?.footprint) return next();
 
@@ -68,18 +70,36 @@ function generatePostSaveHook(options) {
       }
 
       await createFootprint(
-        document.constructor.modelName,
+        document?.constructor?.modelName,
         [],
         docToObject(doc),
         null,
         saveOptions?.session,
-        saveOptions?.user,
+        getUser(saveOptions, options),
         'Create'
       );
     } else {
       if (!options?.operations?.includes('update')) {
         return next();
       }
+
+      const oldDocument = document?.$__?.oldDocument;
+      let changesArray = [];
+
+      recursiveLogObjectChanges(
+        changesArray,
+        docToObject(doc),
+        docToObject(oldDocument)
+      );
+
+      await createFootprint(
+        document?.constructor?.modelName,
+        changesArray,
+        docToObject(doc),
+        docToObject(oldDocument),
+        saveOptions?.session,
+        getUser(saveOptions, options)
+      );
     }
 
     next();
@@ -106,8 +126,6 @@ function generatePreUpdateHook(options) {
         // attaching the old version to queryObject for use in post hook
         queryObject.oldDocument = oldDocument;
       });
-
-    queryObject.user = getUser(queryObject?.options, options);
 
     next();
   };
@@ -140,7 +158,7 @@ function generatePostUpdateHook(options) {
       docToObject(doc),
       docToObject(queryObject.oldDocument),
       queryObject?.options?.session,
-      queryObject.user
+      getUser(queryObject?.options, options)
     );
 
     next();

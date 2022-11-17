@@ -40,7 +40,7 @@ const options = {
   session: session, // supports sessions so updates in aborted transactions won't be logged
 };
 
-Book.findOneAndUpdate(filter, updates, options);
+await Book.findOneAndUpdate(filter, updates, options);
 
 const bookObject = {
   name: 'Harry Potter and the Prisoner of Azkaban',
@@ -52,5 +52,5 @@ const bookObject = {
 await savedBook = Book.create([bookObject], options);
 
 savedBook.name = 'Harry Potter and the Deathly Hallows'
-savedBook.save(options);
+await savedBook.save(options);
 ```
