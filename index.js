@@ -23,7 +23,59 @@ module.exports.plugin = (schema, options = {}) => {
   // Create (isNew == true) and Updates (isNew == false)
   schema.pre('save', generatePreSaveHook(options));
   schema.post('save', generatePostSaveHook(options));
+
+  // Deletes
+  schema.pre(deleteOperations, generatePreDeleteHook(options));
+  schema.post(deleteOperations, generatePostDeleteHook(options));
 };
+
+function generatePreDeleteHook(options) {
+  return async function (next) {
+    const queryObject = this;
+
+    if (
+      !options?.operations?.includes('delete') ||
+      !queryObject?.options?.footprint
+    ) {
+      return next();
+    }
+
+    await queryObject
+      .find(queryObject.getFilter())
+      .cursor()
+      .eachAsync((oldDocument) => {
+        // attaching the old version to queryObject for use in post hook
+        queryObject.oldDocument = oldDocument;
+      });
+
+    next();
+  };
+}
+
+function generatePostDeleteHook(options) {
+  return async function (doc, next) {
+    const queryObject = this;
+
+    if (
+      !options?.operations?.includes('delete') ||
+      !queryObject?.options?.footprint
+    ) {
+      return next();
+    }
+
+    await createFootprint(
+      queryObject?.model?.modelName,
+      [],
+      null,
+      docToObject(doc),
+      queryObject?.options?.session,
+      getUser(queryObject?.options, options),
+      'Delete'
+    );
+
+    next();
+  };
+}
 
 function generatePreSaveHook(options) {
   return async function (next) {

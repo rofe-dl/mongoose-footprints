@@ -54,4 +54,6 @@ await savedBook = Book.create([bookObject], options);
 
 savedBook.name = 'Harry Potter and the Deathly Hallows'
 await savedBook.save(options);
+
+await Book.findOneAndDelete(filter, options);
 ```
