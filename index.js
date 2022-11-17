@@ -3,13 +3,11 @@ const { docToObject, getUser, recursiveLogObjectChanges } = require('./utils');
 
 module.exports.plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
-  // TODO: Delete many and Update many should be handled separately because they're multiple updates
-  // TODO: Support logging document deletes
   // TODO: Non existing fields will either say new field or not say anything
   // TODO: Handle reference changes separately by checking objectID
-  // TODO: Error handle the whole thing so server doesn't crash
+  // TODO: Error handle the whole thing
   // TODO: Write get methods by version, document ID, model names, type
-  // TODO: Comment out console logs, write test cases for the plugin
+  // TODO: Write test cases for the plugin
 
   if (!options?.operations) options.operations = ['update'];
 
