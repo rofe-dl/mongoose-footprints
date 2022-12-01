@@ -1,13 +1,14 @@
-const _Footprint = require('./models/footprintModel');
+const Footprint = require('./models/footprintModel');
 const { docToObject, getUser, recursiveLogObjectChanges } = require('./utils');
 
-module.exports.plugin = (schema, options = {}) => {
+const plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
   // TODO: Non existing fields will either say new field or not say anything
   // TODO: Handle reference changes separately by checking objectID
   // TODO: Error handle the whole thing
   // TODO: Write get methods by version, document ID, model names, type
   // TODO: Write test cases for the plugin
+  // TODO: 'always' option to log everytime
 
   if (!options?.operations) options.operations = ['update'];
 
@@ -227,9 +228,9 @@ async function createFootprint(
 
   const documentId = updatedDocument?._id;
 
-  const previous = await _Footprint
-    .findOne({ documentId, modelName })
-    .sort('-version');
+  const previous = await Footprint.findOne({ documentId, modelName }).sort(
+    '-version'
+  );
 
   let newFootprint = {
     modelName,
@@ -246,5 +247,10 @@ async function createFootprint(
   // look at https://mongoosejs.com/docs/api.html#model_Model-create
   if (session) newFootprint = [newFootprint];
 
-  await _Footprint.create(newFootprint, session ? { session } : null);
+  await Footprint.create(newFootprint, session ? { session } : null);
 }
+
+module.exports = {
+  plugin,
+  ...require('./utils/finders'),
+};
