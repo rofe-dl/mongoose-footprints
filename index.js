@@ -3,12 +3,10 @@ const { docToObject, getUser, recursiveLogObjectChanges } = require('./utils');
 
 const plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
-  // TODO: Non existing fields will either say new field or not say anything
   // TODO: Handle reference changes separately by checking objectID
   // TODO: Error handle the whole thing
-  // TODO: Write get methods by version, document ID, model names, type
-  // TODO: Write test cases for the plugin
-  // TODO: 'always' option to log everytime
+  // TODO: Write unit test cases for the plugin
+  // TODO: option to not save entire documents, deal with all data types
 
   if (!options?.operations) options.operations = ['update'];
 
@@ -19,7 +17,7 @@ const plugin = (schema, options = {}) => {
   schema.pre(updateOperations, generatePreUpdateHook(options));
   schema.post(updateOperations, generatePostUpdateHook(options));
 
-  // Create (isNew == true) and Updates (isNew == false)
+  // Creates (when isNew == true) and Updates (when isNew == false)
   schema.pre('save', generatePreSaveHook(options));
   schema.post('save', generatePostSaveHook(options));
 
@@ -92,7 +90,7 @@ function generatePreSaveHook(options) {
         return next();
       }
 
-      document.wasNew = true;
+      document._wasNew = true;
     } else {
       if (!options?.operations?.includes('update')) {
         return next();
@@ -114,7 +112,7 @@ function generatePostSaveHook(options) {
 
     if (!saveOptions?.footprint) return next();
 
-    if (document.wasNew) {
+    if (document._wasNew) {
       if (!options?.operations?.includes('create')) {
         return next();
       }
