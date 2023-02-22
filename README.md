@@ -44,16 +44,35 @@ const options = {
 await Book.findOneAndUpdate(filter, updates, options);
 
 const bookObject = {
-  name: 'Harry Potter and the Prisoner of Azkaban',
-  author: 'JK Rowling',
+  name: 'Angels & Demons',
+  author: 'Dan Brown',
 };
 
 // to use create with options, the document has to be passed in an array
 // for info, check out https://mongoosejs.com/docs/api/model.html#model_Model-create
 await savedBook = Book.create([bookObject], options);
 
-savedBook.name = 'Harry Potter and the Deathly Hallows'
+savedBook.name = 'The Da Vinci Code'
 await savedBook.save(options);
 
 await Book.findOneAndDelete(filter, options);
+```
+
+## Footprint Model
+
+```js
+{
+  modelName: String,
+  documentId: mongoose.Schema.Types.ObjectId,
+  oldDocument: {},
+  updatedDocument: {},
+  user: mongoose.Schema.Types.Mixed,
+  changes: [String],
+  typeOfChange: {
+    type: String,
+    enum: ['Create', 'Update', 'Delete'],
+    default: 'Update',
+  },
+  version: Number,
+}
 ```
