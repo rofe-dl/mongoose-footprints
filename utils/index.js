@@ -38,7 +38,12 @@ function recursiveLogObjectChanges(
         );
       }
     } else {
-      // TODO: what to do if key not in old document
+      //  what to do if key not in old document
+      let messageArray = message.split(' ');
+      messageArray[0] = `Added a new field `;
+      message = messageArray.join(' ');
+
+      changesArray.push(message + `${key} with value ${value}`);
     }
   }
 }
