@@ -6,9 +6,12 @@ const plugin = (schema, options = {}) => {
   // TODO: Handle reference changes separately by checking objectID
   // TODO: Error handle the whole thing
   // TODO: Write unit test cases for the plugin
-  // TODO: option to not save entire documents, deal with all data types
+  // TODO: Test out all data types
 
   if (!options?.operations) options.operations = ['update'];
+
+  // store documents in footprint by default, if set to false by user manually, don't store
+  if (options?.storeDocuments !== false) options.storeDocuments = true;
 
   const updateOperations = ['findOneAndUpdate', 'update', 'updateOne'];
   const deleteOperations = ['findOneAndDelete', 'deleteOne'];
@@ -61,6 +64,7 @@ function generatePostDeleteHook(options) {
     }
 
     await createFootprint(
+      options,
       queryObject?.model?.modelName,
       [],
       null,
@@ -118,6 +122,7 @@ function generatePostSaveHook(options) {
       }
 
       await createFootprint(
+        options,
         document?.constructor?.modelName,
         [],
         docToObject(doc),
@@ -141,6 +146,7 @@ function generatePostSaveHook(options) {
       );
 
       await createFootprint(
+        options,
         document?.constructor?.modelName,
         changesArray,
         docToObject(doc),
@@ -201,6 +207,7 @@ function generatePostUpdateHook(options) {
     // console.log(changesArray);
 
     await createFootprint(
+      options,
       queryObject?.model?.modelName,
       changesArray,
       docToObject(doc),
@@ -214,6 +221,7 @@ function generatePostUpdateHook(options) {
 }
 
 async function createFootprint(
+  options,
   modelName,
   changesArray,
   updatedDocument,
@@ -233,8 +241,8 @@ async function createFootprint(
   let newFootprint = {
     modelName,
     documentId,
-    oldDocument,
-    updatedDocument,
+    oldDocument: options?.storeDocuments ? oldDocument : {},
+    updatedDocument: options?.storeDocuments ? updatedDocument : {},
     user,
     changes: changesArray,
     typeOfChange: type,
