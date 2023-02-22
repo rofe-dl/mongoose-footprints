@@ -39,15 +39,16 @@ function get(
   if (typeOfChange !== 'All') filter['typeOfChange'] = typeOfChange;
   if (!options?.sort) options['sort'] = '-version';
 
-  return Footprint.find(filter, projection, options)
-    .then((footprint) => {
-      if (typeof callback === 'function') return callback(null, footprint);
+  if (!callback) {
+    return Footprint.find(filter, projection, options);
+  }
 
-      return footprint;
+  Footprint.find(filter, projection, options)
+    .then((footprint) => {
+      if (typeof callback === 'function') callback(null, footprint);
     })
     .catch((err) => {
-      if (typeof callback === 'function') return callback(err, null);
-
-      throw err;
+      if (typeof callback === 'function') callback(err, null);
+      else throw err;
     });
 }
