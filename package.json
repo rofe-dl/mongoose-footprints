@@ -1,0 +1,39 @@
+{
+  "name": "mongoose-footprints",
+  "version": "1.0.0",
+  "description": "A plugin for mongoose to keep track of document changes",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:manual": "node tests/manual/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rofe-dl/mongoose-footprints.git"
+  },
+  "keywords": [
+    "mongoose",
+    "plugin",
+    "audit",
+    "diff",
+    "mongodb",
+    "history"
+  ],
+  "author": "rofe-dl",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rofe-dl/mongoose-footprints/issues"
+  },
+  "homepage": "https://github.com/rofe-dl/mongoose-footprints#readme",
+  "dependencies": {
+    "lodash.isequal": "^4.5.0",
+    "mongoose": "^6.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.4.3",
+    "mongodb-memory-server-core": "^8.11.5"
+  }
+}
