@@ -5,7 +5,7 @@ const plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
   // TODO: Handle reference changes separately by checking objectID
   // TODO: Work on error handling
-  // TODO: Write unit test cases for the plugin
+  // TODO: Write unit test cases for the plugin, test case if document not found
   // TODO: Test out all data types
   // TODO: Work with logging array changes
 
@@ -38,6 +38,8 @@ const plugin = (schema, options = {}) => {
 function generatePreDeleteHook(options) {
   return async function (next) {
     const queryObject = this;
+    if (queryObject?.options?.footprint == null)
+      queryObject.options.footprint = true;
 
     if (
       !options?.operations?.includes('delete') ||
@@ -61,6 +63,8 @@ function generatePreDeleteHook(options) {
 function generatePostDeleteHook(options) {
   return async function (doc, next) {
     const queryObject = this;
+    if (queryObject?.options?.footprint == null)
+      queryObject.options.footprint = true;
 
     if (
       !options?.operations?.includes('delete') ||
@@ -93,6 +97,8 @@ function generatePreSaveHook(options) {
     // save options can be accessed with this.$__.saveOptions
     // https://github.com/Automattic/mongoose/issues/7457#issuecomment-620610979
     const saveOptions = document.$__?.saveOptions;
+    if (saveOptions?.footprint == null) saveOptions.footprint = true;
+
     if (!saveOptions?.footprint) return next();
 
     if (document.isNew) {
@@ -120,6 +126,7 @@ function generatePostSaveHook(options) {
     const document = this;
     const saveOptions = document?.$__?.saveOptions;
 
+    if (saveOptions?.footprint == null) saveOptions.footprint = true;
     if (!saveOptions?.footprint) return next();
 
     if (document._wasNew) {
@@ -171,6 +178,9 @@ function generatePreUpdateHook(options) {
     // 'this' refers to Query object
     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const queryObject = this;
+    if (queryObject?.options?.footprint == null)
+      queryObject.options.footprint = true;
+
     // needed to get the updated doc instead of old one in post hook
     queryObject.options.new = true;
 
@@ -196,6 +206,8 @@ function generatePreUpdateHook(options) {
 function generatePostUpdateHook(options) {
   return async function (doc, next) {
     const queryObject = this;
+    if (queryObject?.options?.footprint == null)
+      queryObject.options.footprint = true;
 
     if (
       !options?.operations?.includes('update') ||
@@ -211,8 +223,6 @@ function generatePostUpdateHook(options) {
       docToObject(doc),
       docToObject(queryObject.oldDocument)
     );
-
-    // console.log(changesArray);
 
     await createFootprint(
       options,
