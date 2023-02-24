@@ -5,16 +5,17 @@ A mongoose plugin to log changes in MongoDB documents. It was inspired by [@mima
 Currently it supports the following operations:
 
 - Update
-  - `Model.findOneAndUpdate`
-  - `Model.update`
-  - `Model.updateOne`
+  - `findOneAndUpdate`
+  - `findByIdAndUpdate`
   - `document.save`
 - Create
-  - `Model.create`
+  - `create`
   - `document.save`
 - Delete
-  - `Model.findOneAndDelete`
-  - `Model.deleteOne`
+  - `findOneAndDelete`
+  - `findByIdAndDelete`
+  - `findOneAndRemove`
+  - `findByIdAndRemove`
 
 Please note that `updateOne` and `deleteOne` methods are not supported when called by documents. They will only get logged when called using the Model.
 

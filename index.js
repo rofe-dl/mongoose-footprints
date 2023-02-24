@@ -14,8 +14,13 @@ const plugin = (schema, options = {}) => {
   // store documents in footprint by default, if set to false by user manually, don't store
   if (options?.storeDocuments !== false) options.storeDocuments = true;
 
-  const updateOperations = ['findOneAndUpdate', 'update', 'updateOne'];
-  const deleteOperations = ['findOneAndDelete', 'deleteOne'];
+  const updateOperations = ['findOneAndUpdate', 'findByIdAndUpdate'];
+  const deleteOperations = [
+    'findOneAndDelete',
+    'findOneAndRemove',
+    'findByIdAndDelete',
+    'findByIdAndRemove',
+  ];
 
   // Updates
   schema.pre(updateOperations, generatePreUpdateHook(options));
