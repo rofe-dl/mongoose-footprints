@@ -27,10 +27,10 @@ mySchema.plugin(footprints.plugin, options);
 
 ### Plugin Options
 
-- `logUser`: `true` / `false` to log the user who updated the document. If set to `false`, the default user
+- `logUser`: `true` / `false` - To log the user who updated the document. If set to `false`, the default user
   logged is `System`. If set to `true`, the user has to be passed in the options of the operation. Otherwise, it will be recorded as `Unknown`. Default is `false`.
-- `operations` : `['update', 'create', 'delete']` The operations that will be logged. Default is `['update']`.
-- `storeDocuments`: `true/false` store the entire old document and updated document inside the Footprint document. Default is `true`.
+- `operations` : `['update', 'create', 'delete']` - The operations that will be logged. Default is `['update']`.
+- `storeDocuments`: `true/false` - Store the entire old document and updated document inside the Footprint document along with the list of changes. Default is `true`.
 
 ### Possible options for mongoose operations
 
