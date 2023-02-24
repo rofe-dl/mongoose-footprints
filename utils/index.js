@@ -21,6 +21,8 @@ function recursiveLogObjectChanges(
   originalObject,
   message = 'Updated '
 ) {
+  if (!updatedObject || !originalObject) return;
+
   for (let [key, value] of Object.entries(updatedObject)) {
     if (key in originalObject) {
       const originalValue = originalObject[key];
