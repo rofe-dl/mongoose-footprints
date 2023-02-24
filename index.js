@@ -171,6 +171,8 @@ function generatePreUpdateHook(options) {
     // 'this' refers to Query object
     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
     const queryObject = this;
+    // needed to get the updated doc instead of old one in post hook
+    queryObject.options.new = true;
 
     if (
       !options?.operations?.includes('update') ||

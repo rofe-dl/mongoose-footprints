@@ -17,7 +17,7 @@ Currently it supports the following operations:
   - `findOneAndRemove`
   - `findByIdAndRemove`
 
-Please note that `updateOne` and `deleteOne` methods are not supported when called by documents. They will only get logged when called using the Model.
+Note: The update operations will set `new: true` as the default so the returned object will always be the updated object.
 
 ## Get Started
 
