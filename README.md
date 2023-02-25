@@ -1,6 +1,8 @@
 # Mongoose Footprints
 
-A mongoose plugin to log changes in MongoDB documents. It was inspired by [@mimani/mongoose-diff-history](https://github.com/mimani/mongoose-diff-history) with several changes on top.
+A mongoose plugin to log changes in MongoDB documents. If used on Mongoose models, any changes made to that model will be logged as a document of the `Footprint` model. It will include contain an array that shows every change made to the document, along with the old and new document bodies.
+
+Changes in referenced documents will not be logged, however changes in nested documents or subdocuments will be logged.
 
 Currently it supports the following operations:
 
@@ -21,14 +23,15 @@ Note: The update operations will set `new: true` as the default so the returned 
 
 ## Get Started
 
-Just set the plugin before making the model from the schema.
+Install the package
 
 ```bash
-# Install the package
 npm i mongoose-footprints
 ```
 
-ModelName.js
+Then, just use the plugin on the schema before you make a model from it.
+
+`Book.js`
 
 ```js
 const footprints = require('mongoose-footprints');
