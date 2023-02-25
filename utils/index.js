@@ -1,17 +1,23 @@
 const isEqual = require('lodash.isequal');
+const { isObjectIdOrHexString } = require('mongoose');
 
 function docToObject(doc) {
   return doc?.toObject({ depopulate: true });
 }
 
 function isObject(object) {
-  return object && !Array.isArray(object) && typeof object === 'object';
+  return (
+    object &&
+    !Array.isArray(object) &&
+    typeof object === 'object' &&
+    !isObjectIdOrHexString(object)
+  );
 }
 
-function getUser(queryObjectOptions, options) {
+function getUser(queryOptions, pluginOptions) {
   // if user is required to log but not given, 'Unknown' is default
   // if not required to log, return 'System'
-  if (options?.logUser) return queryObjectOptions?.user || 'Unknown';
+  if (pluginOptions?.logUser) return queryOptions?.user || 'Unknown';
   else return 'System';
 }
 
@@ -24,6 +30,9 @@ function findDifferenceInObjects(
   if (!updatedObject || !originalObject) return;
 
   for (let [key, value] of Object.entries(updatedObject)) {
+    // updates to Subdocuments changes inner ID so ignore that
+    if (key == '_id') continue;
+
     if (key in originalObject) {
       const originalValue = originalObject[key];
 
