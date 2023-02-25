@@ -248,7 +248,14 @@ async function createFootprint(
   user,
   type = 'Update'
 ) {
-  if (changesArray?.length === 0 && type === 'Update') return;
+  if (
+    // if no changes made in an update operation
+    (changesArray?.length === 0 && type === 'Update') ||
+    // or if delete/create was not successful, don't create footprint
+    (type === 'Delete' && !oldDocument) ||
+    (type === 'Create' && !newDocument)
+  )
+    return;
 
   const documentId = newDocument?._id ?? oldDocument?._id;
 
