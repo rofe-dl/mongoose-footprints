@@ -15,7 +15,7 @@ function getUser(queryObjectOptions, options) {
   else return 'System';
 }
 
-function recursiveLogObjectChanges(
+function findDifferenceInObjects(
   changesArray,
   updatedObject,
   originalObject,
@@ -28,7 +28,7 @@ function recursiveLogObjectChanges(
       const originalValue = originalObject[key];
 
       if (isObject(value)) {
-        recursiveLogObjectChanges(
+        findDifferenceInObjects(
           changesArray,
           value,
           originalValue,
@@ -41,11 +41,15 @@ function recursiveLogObjectChanges(
       }
     } else {
       //  what to do if key not in old document
+      if (isObject(value)) {
+        findDifferenceInObjects(changesArray, value, {}, message + `${key}.`);
+      } else {
       let messageArray = message.split(' ');
-      messageArray[0] = `Added a new field`;
-      message = messageArray.join(' ');
+        messageArray[0] = `Added a new field at`;
+        const newMessage = messageArray.join(' ');
 
-      changesArray.push(message + `${key} with value ${value}`);
+        changesArray.push(newMessage + `${key} with value '${value}'`);
+      }
     }
   }
 }
@@ -54,5 +58,5 @@ module.exports = {
   docToObject,
   isObject,
   getUser,
-  recursiveLogObjectChanges,
+  findDifferenceInObjects,
 };

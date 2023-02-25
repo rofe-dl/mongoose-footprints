@@ -1,5 +1,5 @@
 const Footprint = require('./models/footprintModel');
-const { docToObject, getUser, recursiveLogObjectChanges } = require('./utils');
+const { docToObject, getUser, findDifferenceInObjects } = require('./utils');
 
 const plugin = (schema, options = {}) => {
   // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
@@ -152,7 +152,7 @@ function generatePostSaveHook(options) {
       const oldDocument = document?.$__?.oldDocument;
       let changesArray = [];
 
-      recursiveLogObjectChanges(
+      findDifferenceInObjects(
         changesArray,
         docToObject(doc),
         docToObject(oldDocument)
@@ -218,7 +218,7 @@ function generatePostUpdateHook(options) {
 
     let changesArray = [];
 
-    recursiveLogObjectChanges(
+    findDifferenceInObjects(
       changesArray,
       docToObject(doc),
       docToObject(queryObject.oldDocument)
