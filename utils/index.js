@@ -53,7 +53,7 @@ function findDifferenceInObjects(
       if (isObject(value)) {
         findDifferenceInObjects(changesArray, value, {}, message + `${key}.`);
       } else {
-      let messageArray = message.split(' ');
+        let messageArray = message.split(' ');
         messageArray[0] = `Added a new field at`;
         const newMessage = messageArray.join(' ');
 

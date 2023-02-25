@@ -26,6 +26,7 @@ const testSchema = new Schema({
   },
   objectIdField: {
     type: Schema.Types.ObjectId,
+    default: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4a'),
   },
   arrayField: {
     type: [String],
@@ -60,6 +61,8 @@ const testSchema = new Schema({
   }),
 });
 
-testSchema.plugin(footprints.plugin);
+testSchema.plugin(footprints.plugin, {
+  operations: ['update', 'create', 'delete'],
+});
 
 module.exports = mongoose.model('TestModel', testSchema);
