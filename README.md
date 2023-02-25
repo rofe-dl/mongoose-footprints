@@ -106,7 +106,7 @@ await Book.findOneAndDelete(filter, {
   modelName: String,
   documentId: mongoose.Schema.Types.ObjectId,
   oldDocument: {},
-  updatedDocument: {},
+  newDocument: {},
   user: mongoose.Schema.Types.Mixed,
   changes: [String],
   typeOfChange: {

@@ -242,7 +242,7 @@ async function createFootprint(
   options,
   modelName,
   changesArray,
-  updatedDocument,
+  newDocument,
   oldDocument,
   session,
   user,
@@ -250,7 +250,7 @@ async function createFootprint(
 ) {
   if (changesArray?.length === 0 && type === 'Update') return;
 
-  const documentId = updatedDocument?._id;
+  const documentId = newDocument?._id ?? oldDocument?._id;
 
   const previous = await Footprint.findOne({ documentId, modelName }).sort(
     '-version'
@@ -260,7 +260,7 @@ async function createFootprint(
     modelName,
     documentId,
     oldDocument: options?.storeDocuments ? oldDocument : {},
-    updatedDocument: options?.storeDocuments ? updatedDocument : {},
+    newDocument: options?.storeDocuments ? newDocument : {},
     user,
     changes: changesArray,
     typeOfChange: type,
