@@ -58,6 +58,10 @@ const testSchema = new Schema({
       type: Number,
     },
   }),
+  mapField: {
+    type: Map,
+    of: String,
+  },
 });
 
 testSchema.plugin(footprints.plugin, {

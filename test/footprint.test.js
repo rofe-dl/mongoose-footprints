@@ -22,12 +22,16 @@ describe('Logging Basic Changes For All Operations', () => {
         getUpdateToApply()
       );
 
-      expect(doc.toJSON()).toMatchObject(getUpdatedDocument());
+      expect(toJson(doc)).toMatchObject(getUpdatedDocument());
       doc = await footprint.getFootprints({ documentId: doc._id });
 
-      // expect(doc.toJSON()).toMatchObject({});
+      // expect(toJson(doc)).toMatchObject({});
 
       done();
     })
   );
 });
+
+function toJson(doc) {
+  return doc?.toJSON({ flattenMaps: true });
+}

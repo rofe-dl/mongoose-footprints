@@ -1,3 +1,7 @@
+/**
+ * Template objects for use by unit tests to create and update
+ * documents of the TestModel.
+ */
 const mongoose = require('mongoose');
 
 module.exports.DEFAULT_DATE = new Date(Date.now());
@@ -31,6 +35,10 @@ module.exports.getSampleDocument = () => {
     subDocumentField: {
       subDocumentString: "I'm in a subdocument",
       subDocumentNumber: 1000,
+    },
+    mapField: {
+      key1: 'value1',
+      key2: 'value2',
     },
   };
 };
@@ -68,6 +76,10 @@ module.exports.getUpdateToApply = () => {
     },
     $push: {
       arrayField2: 'you',
+    },
+    mapField: {
+      key1: 'value1 updated',
+      key2: 'value2 updated',
     },
   };
 };
