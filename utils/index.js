@@ -2,17 +2,17 @@ const isEqual = require('lodash.isequal');
 const { isObjectIdOrHexString } = require('mongoose');
 
 function docToObject(doc) {
-  return doc?.toObject({ depopulate: true });
+  return doc?.toObject({ depopulate: true, flattenMaps: true });
 }
 
 function isObject(object) {
   return (
     object &&
     typeof object === 'object' &&
-    !Array.isArray(object) &&
-    !isObjectIdOrHexString(object) &&
-    !(object instanceof Date) &&
-    object.constructor?.name !== 'Buffer'
+    !Array.isArray(object) && // isn't an Array
+    !isObjectIdOrHexString(object) && // isn't a MongoDB object ID
+    !(object instanceof Date) && // isn't a Date object
+    object.constructor?.name !== 'Buffer' // isn't a MongoDB buffer field
   );
 }
 

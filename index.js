@@ -2,8 +2,7 @@ const Footprint = require('./models/footprintModel');
 const { docToObject, getUser, findDifferenceInObjects } = require('./utils');
 
 const plugin = (schema, options = {}) => {
-  // TODO: Write unit test cases for the plugin, test case if document not found
-  // TODO: Handle map types
+  // TODO: Test case if document not found
   // TODO: Removing a field using $unset and $rename
 
   if (!options?.operations) options.operations = ['update'];

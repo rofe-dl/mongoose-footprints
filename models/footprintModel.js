@@ -16,9 +16,7 @@ const footprintSchema = new mongoose.Schema(
     version: { type: Number, min: 1, default: 1 },
   },
   {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    timestamps: { createdAt: true, updatedAt: false },
   }
 );
 
