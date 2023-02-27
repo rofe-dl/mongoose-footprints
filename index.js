@@ -3,11 +3,12 @@ const { docToObject, getUser, findDifferenceInObjects } = require('./utils');
 
 const plugin = (schema, options = {}) => {
   // TODO: Test case if document not found
-  // TODO: Removing a field using $unset and $rename
+  // TODO: Test if unit tests actually work by changing template objects and code
 
   if (!options?.operations) options.operations = ['update'];
 
-  // store documents in footprint by default, if set to false by user manually, don't store
+  // store documents in footprint by default
+  // otherwise if set to false by user manually, don't store
   if (options?.storeDocuments !== false) options.storeDocuments = true;
 
   const updateOperations = ['findOneAndUpdate', 'findByIdAndUpdate'];

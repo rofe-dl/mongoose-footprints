@@ -22,7 +22,7 @@ describe('Logging Basic Changes For All Operations', () => {
         getUpdateToApply()
       );
 
-      expect(toJson(doc)).toMatchObject(getUpdatedDocument());
+      expect(toJson(doc)).toEqual(getUpdatedDocument());
       doc = await footprint.getFootprints({ documentId: doc._id });
 
       // expect(toJson(doc)).toMatchObject({});

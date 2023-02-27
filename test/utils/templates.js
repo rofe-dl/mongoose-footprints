@@ -19,6 +19,7 @@ module.exports.getSampleDocument = () => {
     objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4a'),
     arrayField: ['hello', 'world'],
     arrayField2: ['hello', 'what', 'is', 'up'],
+    fieldToRemove: 'Goodbye!',
     nestedField: {
       nestedName: 'What',
       nestedObject: {
@@ -39,6 +40,7 @@ module.exports.getSampleDocument = () => {
     mapField: {
       key1: 'value1',
       key2: 'value2',
+      keyToRemove: 'Bye have a great time!',
     },
   };
 };
@@ -53,6 +55,7 @@ module.exports.getUpdateToApply = () => {
     booleanField: false,
     objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4b'),
     arrayField: ['hello', 'world', 'extra', 'word'],
+    newFieldToAdd: "Hey I'm new here",
     nestedField: {
       nestedName: 'Why',
       nestedObject: {
@@ -81,12 +84,14 @@ module.exports.getUpdateToApply = () => {
       key1: 'value1 updated',
       key2: 'value2 updated',
     },
+    $unset: { fieldToRemove: '' },
   };
 };
 
 module.exports.getUpdatedDocument = () => {
   return {
     _id: expect.anything(),
+    __v: expect.anything(),
     stringField: 'Updated Hello',
     numberField: 11,
     dateField: exports.UPDATED_DATE,
@@ -105,6 +110,7 @@ module.exports.getUpdatedDocument = () => {
     objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4b'),
     arrayField: ['hello', 'world', 'extra', 'word'],
     arrayField2: ['hello', 'what', 'is', 'up', 'you'],
+    newFieldToAdd: "Hey I'm new here",
     nestedField: {
       nestedName: 'Why',
       nestedObject: {
@@ -113,18 +119,25 @@ module.exports.getUpdatedDocument = () => {
       nestedNumbers: [21, 31, 41],
       nestedObjects: [
         {
+          _id: expect.anything(),
           doubleNestedNum: 60,
           doubleNestedString: 'How are you',
         },
         {
+          _id: expect.anything(),
           doubleNestedNum: 50,
           doubleNestedString: 'Why are you',
         },
       ],
     },
     subDocumentField: {
+      _id: expect.anything(),
       subDocumentString: 'What am I doing here',
       subDocumentNumber: 1001,
+    },
+    mapField: {
+      key1: 'value1 updated',
+      key2: 'value2 updated',
     },
   };
 };

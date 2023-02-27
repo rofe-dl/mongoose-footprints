@@ -31,6 +31,12 @@ const testSchema = new Schema({
   arrayField2: {
     type: [String],
   },
+  fieldToRemove: {
+    type: String,
+  },
+  newFieldToAdd: {
+    type: String,
+  },
   nestedField: {
     nestedName: {
       type: String,
