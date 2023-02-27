@@ -34,7 +34,7 @@ function findDifferenceInObjects(
 
   for (let key of keysUnion) {
     // updates to Subdocuments changes inner MongoDB ID so ignore that
-    if (key == '_id') continue;
+    if (key == '_id' || key == '__v') continue;
 
     let value = updatedObject[key];
 
