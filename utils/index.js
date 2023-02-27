@@ -8,9 +8,11 @@ function docToObject(doc) {
 function isObject(object) {
   return (
     object &&
-    !Array.isArray(object) &&
     typeof object === 'object' &&
-    !isObjectIdOrHexString(object)
+    !Array.isArray(object) &&
+    !isObjectIdOrHexString(object) &&
+    !(object instanceof Date) &&
+    object.constructor?.name !== 'Buffer'
   );
 }
 
@@ -34,9 +36,9 @@ function findDifferenceInObjects(
     if (key == '_id') continue;
 
     if (key in originalObject) {
-      const originalValue = originalObject[key];
+      let originalValue = originalObject[key];
 
-      if (isObject(value)) {
+      if (isObject(value) && isObject(originalValue)) {
         findDifferenceInObjects(
           changesArray,
           value,
@@ -44,6 +46,12 @@ function findDifferenceInObjects(
           message + `${key}.`
         );
       } else if (!isEqual(value, originalValue)) {
+        if (isObject(originalValue) || Array.isArray(originalValue))
+          originalValue = JSON.stringify(originalValue);
+
+        if (isObject(value) || Array.isArray(value))
+          value = JSON.stringify(value);
+
         changesArray.push(
           message + `${key} from '${originalValue}' to '${value}'`
         );
@@ -56,6 +64,8 @@ function findDifferenceInObjects(
         let messageArray = message.split(' ');
         messageArray[0] = `Added a new field at`;
         const newMessage = messageArray.join(' ');
+
+        if (Array.isArray(value)) value = JSON.stringify(value);
 
         changesArray.push(newMessage + `${key} with value '${value}'`);
       }

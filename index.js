@@ -2,12 +2,9 @@ const Footprint = require('./models/footprintModel');
 const { docToObject, getUser, findDifferenceInObjects } = require('./utils');
 
 const plugin = (schema, options = {}) => {
-  // TODO: Replace findByIdAndUpdate operations in codebase as they don't work with the middleware
-  // TODO: Handle reference changes separately by checking objectID
-  // TODO: Work on error handling
   // TODO: Write unit test cases for the plugin, test case if document not found
-  // TODO: Test out all data types
-  // TODO: Work with logging array changes
+  // TODO: Handle map types
+  // TODO: Removing a field using $unset and $rename
 
   if (!options?.operations) options.operations = ['update'];
 
