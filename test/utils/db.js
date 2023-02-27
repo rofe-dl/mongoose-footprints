@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);
 const { MongoMemoryServer } = require('mongodb-memory-server-core');
 process.env['MONGOMS_VERSION'] = '6.0.4';
 

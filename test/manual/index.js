@@ -1,7 +1,8 @@
 const footprints = require('../../index');
-const TestModel = require('../testModel');
+const TestModel = require('../models/testModel');
 const mongoose = require('mongoose');
-const db = require('../db');
+const db = require('../utils/db');
+const { getSampleDocument, getUpdateToApply } = require('../utils/templates');
 require('dotenv').config({ path: 'config.env' });
 
 (async () => {
@@ -12,7 +13,7 @@ require('dotenv').config({ path: 'config.env' });
   mongoose.set('strictQuery', true);
   await mongoose.connect(process.env.MONGODB_URI);
 
-  // const doc = await TestModel.create({ stringField: 'woah' });
+  const doc = await TestModel.create(getSampleDocument());
 
   // const doc = new TestModel({ stringField: 'woah' });
   // await doc.save();
@@ -22,18 +23,7 @@ require('dotenv').config({ path: 'config.env' });
   //   { stringField: 'woah' }
   // );
 
-  // await TestModel.findByIdAndUpdate(doc._id, {
-  //   subDocumentField: {
-  //     subDocumentNumber: 14,
-  //   },
-  //   nestedField: {
-  //     nestedObjects: [12, 13, 20],
-  //     nestedObject: {
-  //       nestedNumber: 100,
-  //     },
-  //   },
-  //   objectIdField: '63f922f77800ea7bc335fe4b',
-  // });
+  const fp = await TestModel.findByIdAndUpdate(doc._id, getUpdateToApply());
 
   // const doc = await TestModel.findOne({ stringField: 'woa' });
   // doc.stringField = 'woah';
@@ -41,14 +31,21 @@ require('dotenv').config({ path: 'config.env' });
 
   // await TestModel.findOneAndDelete({ stringField: 'woa' });
 
-  await TestModel.findByIdAndDelete('63f9019ef8cc5fc56b63605a');
+  // await TestModel.findByIdAndDelete('63f9019ef8cc5fc56b63605a');
 
   // await TestModel.findOneAndRemove({ stringField: 'woah' });
 
   // await TestModel.findByIdAndRemove('63f915d16dd625bd89b6c147');
 
-  // let wa = await footprints.getFootprints();
+  let x = await footprints.getFootprints({
+    documentId: fp._id,
+    typeOfChange: 'Update',
+  });
 
-  await mongoose?.connection?.close();
-  await db?.close();
+  console.log(x[0].toJSON());
+
+  // await mongoose?.connection?.close();
+
+  // await db?.clear();
+  // await db?.close();
 })();
