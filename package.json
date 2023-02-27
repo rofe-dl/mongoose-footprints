@@ -4,7 +4,7 @@
   "description": "A plugin for mongoose to keep track of document changes",
   "main": "index.js",
   "directories": {
-    "test": "tests"
+    "test": "test"
   },
   "scripts": {
     "test": "jest --testEnvironment=node --runInBand ./test",
@@ -20,7 +20,9 @@
     "audit",
     "diff",
     "mongodb",
-    "history"
+    "history",
+    "trace",
+    "log"
   ],
   "author": "rofe-dl",
   "license": "Apache-2.0",
