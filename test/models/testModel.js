@@ -51,6 +51,7 @@ const testSchema = new Schema({
     },
     nestedObjects: [
       {
+        _id: { id: false }, // prevents giving inner id
         doubleNestedNum: Number,
         doubleNestedString: String,
       },

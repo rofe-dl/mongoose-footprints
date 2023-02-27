@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest --testEnvironment=node --runInBand ./test",
+    "test": "jest --testEnvironment=node --runInBand --silent=false ./test",
     "test:manual": "node test/manual/index.js"
   },
   "repository": {

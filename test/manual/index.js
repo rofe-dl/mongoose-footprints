@@ -51,7 +51,7 @@ require('dotenv').config({ path: 'config.env' });
     typeOfChange: 'Update',
   });
 
-  console.log(x[0].toJSON());
+  console.log(x[0]);
 
   const input = prompt('Enter 1 to clear the DB, or ENTER to skip: ');
 
