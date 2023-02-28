@@ -4,6 +4,8 @@ A mongoose plugin to log changes in MongoDB documents. If used on Mongoose model
 
 Changes in referenced/populated documents will not be logged unless the referenced Object ID changes entirely to a different one. However changes in nested documents or subdocuments will be logged.
 
+The plugin also supports sessions so queries in aborted transactions won't be logged.
+
 Currently it supports the following operations:
 
 - Update
@@ -70,12 +72,16 @@ You can pass in extra options during mongoose queries that are specific to that 
 
 ### Example Usage
 
+`findOneAndUpdate()`
+
 ```js
 await Book.findOneAndUpdate(filter, updates, {
   user: req.user,
-  session: session, // supports sessions so updates in aborted transactions won't be logged
+  session: session,
 });
 ```
+
+`create()`
 
 ```js
 const bookObject = {
@@ -83,21 +89,36 @@ const bookObject = {
   author: 'Dan Brown',
 };
 
-// to use create with options, the document has to be passed in an array
-// for info, check out https://mongoosejs.com/docs/api/model.html#model_Model-create
-await savedBook = Book.create([bookObject], {
-  footprint: false // setting to false will not log this creation
-});
+// to use Model.create() with options, the document has to be passed in an array
+// see https://mongoosejs.com/docs/api/model.html#model_Model-create
+const doc = (
+  await Book.create([bookObject], {
+    footprint: false, // setting to false will not log this creation
+  })
+)[0];
+```
 
-savedBook.name = 'The Da Vinci Code'
+`save() when updating`
+
+```js
+let savedBook = await Book.findById(doc._id);
+savedBook.name = 'The Da Vinci Code';
 await savedBook.save({
-  footprint: true // already true by default though
+  footprint: true, // already true by default though
 });
 ```
 
+`save() when creating`
+
+```js
+const book = new Book({ name: 'Angels & Demons', author: 'Dan Brown' });
+await book.save({ user: req.user });
+```
+
+`findOneAndDelete()`
+
 ```js
 await Book.findOneAndDelete(filter, {
-  user: req.user,
   session: session,
 });
 ```
