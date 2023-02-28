@@ -1,5 +1,8 @@
 const db = require('./utils/db');
-const TestModel = require('./models/testModel');
+const { getModel } = require('./models/testModel');
+const TestModel = getModel('TestModel', {
+  operations: ['update', 'create', 'delete'],
+});
 const footprint = require('../index');
 const autocatch = require('./utils/autocatch');
 const {

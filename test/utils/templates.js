@@ -140,10 +140,10 @@ module.exports.getUpdatedDocument = () => {
   };
 };
 
-module.exports.getCreateFootprint = () => {
+module.exports.getCreateFootprint = (modelName = 'TestModel') => {
   return {
     _id: expect.anything(),
-    modelName: 'TestModel',
+    modelName: modelName,
     documentId: expect.anything(),
     oldDocument: null,
     newDocument: {
@@ -191,10 +191,10 @@ module.exports.getCreateFootprint = () => {
   };
 };
 
-module.exports.getUpdateFootprint = () => {
+module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
   return {
     _id: expect.anything(),
-    modelName: 'TestModel',
+    modelName,
     documentId: expect.anything(),
     oldDocument: {
       nestedField: {
@@ -305,10 +305,10 @@ module.exports.getUpdateFootprint = () => {
   };
 };
 
-module.exports.getDeleteFootprint = () => {
+module.exports.getDeleteFootprint = (modelName = 'TestModel') => {
   return {
     _id: expect.anything(),
-    modelName: 'TestModel',
+    modelName,
     documentId: expect.anything(),
     oldDocument: {
       nestedField: {

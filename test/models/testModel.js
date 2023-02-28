@@ -1,78 +1,83 @@
 const footprints = require('../../index');
 const { Schema, default: mongoose } = require('mongoose');
 
-const testSchema = new Schema({
-  // https://mongoosejs.com/docs/schematypes.html
-  // should cover all types
-  stringField: {
-    type: String,
-  },
-  numberField: {
-    type: Number,
-  },
-  dateField: {
-    type: Date,
-  },
-  bufferField: {
-    type: Buffer,
-  },
-  bufferField2: {
-    type: Buffer,
-  },
-  booleanField: {
-    type: Boolean,
-  },
-  objectIdField: {
-    type: Schema.Types.ObjectId,
-  },
-  arrayField: {
-    type: [String],
-  },
-  arrayField2: {
-    type: [String],
-  },
-  fieldToRemove: {
-    type: String,
-  },
-  newFieldToAdd: {
-    type: String,
-  },
-  nestedField: {
-    nestedName: {
+function getSchema() {
+  return new Schema({
+    // https://mongoosejs.com/docs/schematypes.html
+    // should cover all types
+    stringField: {
       type: String,
     },
-    nestedObject: {
-      nestedNumber: {
-        type: Number,
-      },
-    },
-    nestedNumbers: {
-      type: [Number],
-    },
-    nestedObjects: [
-      {
-        _id: { id: false }, // prevents giving inner id
-        doubleNestedNum: Number,
-        doubleNestedString: String,
-      },
-    ],
-  },
-  subDocumentField: new Schema({
-    subDocumentString: {
-      type: String,
-    },
-    subDocumentNumber: {
+    numberField: {
       type: Number,
     },
-  }),
-  mapField: {
-    type: Map,
-    of: String,
-  },
-});
+    dateField: {
+      type: Date,
+    },
+    bufferField: {
+      type: Buffer,
+    },
+    bufferField2: {
+      type: Buffer,
+    },
+    booleanField: {
+      type: Boolean,
+    },
+    objectIdField: {
+      type: Schema.Types.ObjectId,
+    },
+    arrayField: {
+      type: [String],
+    },
+    arrayField2: {
+      type: [String],
+    },
+    fieldToRemove: {
+      type: String,
+    },
+    newFieldToAdd: {
+      type: String,
+    },
+    nestedField: {
+      nestedName: {
+        type: String,
+      },
+      nestedObject: {
+        nestedNumber: {
+          type: Number,
+        },
+      },
+      nestedNumbers: {
+        type: [Number],
+      },
+      nestedObjects: [
+        {
+          _id: { id: false }, // prevents giving inner id
+          doubleNestedNum: Number,
+          doubleNestedString: String,
+        },
+      ],
+    },
+    subDocumentField: new Schema({
+      subDocumentString: {
+        type: String,
+      },
+      subDocumentNumber: {
+        type: Number,
+      },
+    }),
+    mapField: {
+      type: Map,
+      of: String,
+    },
+  });
+}
 
-testSchema.plugin(footprints.plugin, {
-  operations: ['update', 'create', 'delete'],
-});
+module.exports.getModel = (modelName, options) => {
+  if (!modelName) throw Error('No model name passed');
 
-module.exports = mongoose.model('TestModel', testSchema);
+  const schema = getSchema();
+  schema.plugin(footprints.plugin, options);
+
+  return mongoose.model(modelName, schema);
+};

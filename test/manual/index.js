@@ -1,5 +1,5 @@
 const footprints = require('../../index');
-const TestModel = require('../models/testModel');
+const TestModel = require('../models/testModel').getModel('TestModel');
 const mongoose = require('mongoose');
 const db = require('../utils/db');
 const { getSampleDocument, getUpdateToApply } = require('../utils/templates');
