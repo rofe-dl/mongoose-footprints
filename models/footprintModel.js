@@ -17,6 +17,7 @@ const footprintSchema = new mongoose.Schema(
   },
   {
     timestamps: { createdAt: true, updatedAt: false },
+    versionKey: false,
   }
 );
 
