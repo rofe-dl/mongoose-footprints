@@ -140,7 +140,56 @@ module.exports.getUpdatedDocument = () => {
   };
 };
 
-module.exports.getCreateFootprint = () => {};
+module.exports.getCreateFootprint = () => {
+  return {
+    _id: expect.anything(),
+    modelName: 'TestModel',
+    documentId: expect.anything(),
+    oldDocument: null,
+    newDocument: {
+      nestedField: {
+        nestedObject: {
+          nestedNumber: 100,
+        },
+        nestedName: 'What',
+        nestedNumbers: [20, 30, 40],
+        nestedObjects: [
+          {
+            doubleNestedNum: 50,
+            doubleNestedString: 'How are you',
+          },
+        ],
+      },
+      _id: expect.anything(),
+      stringField: 'Hello',
+      numberField: 10,
+      dateField: exports.DEFAULT_DATE,
+      bufferField: expect.anything(),
+      bufferField2: expect.anything(),
+      booleanField: true,
+      objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4a'),
+      arrayField: ['hello', 'world'],
+      arrayField2: ['hello', 'what', 'is', 'up'],
+      fieldToRemove: 'Goodbye!',
+      subDocumentField: {
+        subDocumentString: "I'm in a subdocument",
+        subDocumentNumber: 1000,
+        _id: expect.anything(),
+      },
+      mapField: {
+        key1: 'value1',
+        key2: 'value2',
+        keyToRemove: 'Bye have a great time!',
+      },
+      __v: expect.anything(),
+    },
+    user: 'System',
+    changes: [],
+    typeOfChange: 'Create',
+    version: expect.anything(),
+    createdAt: expect.anything(),
+  };
+};
 
 module.exports.getUpdateFootprint = () => {
   return {
@@ -168,7 +217,7 @@ module.exports.getUpdateFootprint = () => {
       bufferField: expect.anything(),
       bufferField2: expect.anything(),
       booleanField: true,
-      objectIdField: expect.anything(),
+      objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4a'),
       arrayField: ['hello', 'world'],
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
@@ -209,7 +258,7 @@ module.exports.getUpdateFootprint = () => {
       bufferField: expect.anything(),
       bufferField2: expect.anything(),
       booleanField: false,
-      objectIdField: expect.anything(),
+      objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4b'),
       arrayField: ['hello', 'world', 'extra', 'word'],
       arrayField2: ['hello', 'what', 'is', 'up', 'you'],
       subDocumentField: {
@@ -253,8 +302,56 @@ module.exports.getUpdateFootprint = () => {
     typeOfChange: 'Update',
     version: expect.anything(),
     createdAt: expect.anything(),
-    __v: expect.anything(),
   };
 };
 
-module.exports.getDeleteFootprint = () => {};
+module.exports.getDeleteFootprint = () => {
+  return {
+    _id: expect.anything(),
+    modelName: 'TestModel',
+    documentId: expect.anything(),
+    oldDocument: {
+      nestedField: {
+        nestedObject: {
+          nestedNumber: 100,
+        },
+        nestedName: 'What',
+        nestedNumbers: [20, 30, 40],
+        nestedObjects: [
+          {
+            doubleNestedNum: 50,
+            doubleNestedString: 'How are you',
+          },
+        ],
+      },
+      _id: expect.anything(),
+      stringField: 'Hello',
+      numberField: 10,
+      dateField: exports.DEFAULT_DATE,
+      bufferField: expect.anything(),
+      bufferField2: expect.anything(),
+      booleanField: true,
+      objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4a'),
+      arrayField: ['hello', 'world'],
+      arrayField2: ['hello', 'what', 'is', 'up'],
+      fieldToRemove: 'Goodbye!',
+      subDocumentField: {
+        subDocumentString: "I'm in a subdocument",
+        subDocumentNumber: 1000,
+        _id: expect.anything(),
+      },
+      mapField: {
+        key1: 'value1',
+        key2: 'value2',
+        keyToRemove: 'Bye have a great time!',
+      },
+      __v: expect.anything(),
+    },
+    newDocument: null,
+    user: 'System',
+    changes: [],
+    typeOfChange: 'Delete',
+    version: expect.anything(),
+    createdAt: expect.anything(),
+  };
+};

@@ -7,6 +7,8 @@ const {
   getUpdateToApply,
   getUpdatedDocument,
   getUpdateFootprint,
+  getCreateFootprint,
+  getDeleteFootprint,
 } = require('./utils/templates');
 
 beforeAll(async () => await db.connect());
@@ -53,7 +55,7 @@ describe('Logging Changes For All Supported Operations', () => {
   );
 
   it(
-    'successfully logs save() on update',
+    'successfully logs save() when updating documents',
     autocatch(async (done) => {
       let doc = await TestModel.create(getSampleDocument());
       doc = await TestModel.findById(doc._id);
@@ -78,9 +80,92 @@ describe('Logging Changes For All Supported Operations', () => {
 
       await doc.save();
 
-      let fp = (await footprint.getFootprints())[0];
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
 
       expect(toJson(fp)).toEqual(updateFootprint);
+
+      done();
+    })
+  );
+
+  it(
+    'successfully logs create()',
+    autocatch(async (done) => {
+      let doc = await TestModel.create(getSampleDocument());
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp)).toEqual(getCreateFootprint());
+
+      done();
+    })
+  );
+
+  it(
+    'successfully logs save() when creating documents',
+    autocatch(async (done) => {
+      let doc = new TestModel(getSampleDocument());
+      await doc.save();
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp)).toEqual(getCreateFootprint());
+
+      done();
+    })
+  );
+
+  it(
+    'successfully logs findOneAndDelete()',
+    autocatch(async (done) => {
+      let doc = await TestModel.create(getSampleDocument());
+      await TestModel.findOneAndDelete({ _id: doc._id });
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp)).toEqual(getDeleteFootprint());
+
+      done();
+    })
+  );
+
+  it(
+    'successfully logs findByIdAndDelete()',
+    autocatch(async (done) => {
+      let doc = await TestModel.create(getSampleDocument());
+      await TestModel.findByIdAndDelete(doc._id);
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp)).toEqual(getDeleteFootprint());
+
+      done();
+    })
+  );
+
+  it(
+    'successfully logs findOneAndRemove()',
+    autocatch(async (done) => {
+      let doc = await TestModel.create(getSampleDocument());
+      await TestModel.findOneAndRemove({ _id: doc._id });
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp)).toEqual(getDeleteFootprint());
+
+      done();
+    })
+  );
+
+  it(
+    'successfully logs findByIdAndRemove()',
+    autocatch(async (done) => {
+      let doc = await TestModel.create(getSampleDocument());
+      await TestModel.findByIdAndRemove(doc._id);
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp)).toEqual(getDeleteFootprint());
 
       done();
     })
