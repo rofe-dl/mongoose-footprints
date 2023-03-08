@@ -3,7 +3,10 @@ const { docToObject, getUser, findDifferenceInObjects } = require('./utils');
 
 const plugin = (schema, options = {}) => {
   // TODO: Test case if document not found
+  // TODO: Test adding a subdocument if wasn't there originally
+  // TODO: Give screenshots of the result in README
   // TODO: Test if unit tests actually work by changing template objects and code
+  // TODO: Readme docs about the finder methods
 
   if (!options?.operations) options.operations = ['update'];
 
@@ -11,6 +14,8 @@ const plugin = (schema, options = {}) => {
   // otherwise if set to false by user manually, don't store
   if (options?.storeDocuments !== false) options.storeDocuments = true;
 
+  // adding findById* operations is redundant because it already
+  // uses findOne* query internally by default but keeping for clarity
   const updateOperations = ['findOneAndUpdate', 'findByIdAndUpdate'];
   const deleteOperations = [
     'findOneAndDelete',

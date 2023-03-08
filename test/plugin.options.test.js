@@ -106,4 +106,34 @@ describe('Plugin Options', () => {
       done();
     })
   );
+
+  it(
+    'should not store documents if storeDocuments is false',
+    autocatch(async (done) => {
+      const TestModelTemp = getModel('TestModelTemp_storeDocuments_false', {
+        operations: ['update', 'create', 'delete'],
+        storeDocuments: false,
+      });
+
+      let doc = await TestModelTemp.create(getSampleDocument());
+      await TestModelTemp.findByIdAndUpdate(doc._id, getUpdateToApply());
+      doc = await TestModelTemp.findById(doc._id);
+      doc.stringField = 'Wah';
+      await doc.save();
+      await TestModelTemp.findByIdAndDelete(doc._id);
+
+      let fp = await footprint.getFootprints({ documentId: doc._id });
+
+      expect(fp[0].oldDocument).toBeUndefined();
+      expect(fp[0].newDocument).toBeUndefined();
+      expect(fp[1].oldDocument).toBeUndefined();
+      expect(fp[1].newDocument).toBeUndefined();
+      expect(fp[2].oldDocument).toBeUndefined();
+      expect(fp[2].newDocument).toBeUndefined();
+      expect(fp[3].oldDocument).toBeUndefined();
+      expect(fp[3].newDocument).toBeUndefined();
+
+      done();
+    })
+  );
 });
