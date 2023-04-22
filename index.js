@@ -45,7 +45,7 @@ function generatePreDeleteHook(options) {
 
     if (
       !options?.operations?.includes('delete') ||
-      !queryObject?.options?.footprint
+      queryObject?.options?.footprint !== true
     ) {
       return next();
     }
@@ -70,7 +70,7 @@ function generatePostDeleteHook(options) {
 
     if (
       !options?.operations?.includes('delete') ||
-      !queryObject?.options?.footprint
+      queryObject?.options?.footprint !== true
     ) {
       return next();
     }
@@ -101,7 +101,7 @@ function generatePreSaveHook(options) {
     const saveOptions = document.$__?.saveOptions;
     if (saveOptions?.footprint == null) saveOptions.footprint = true;
 
-    if (!saveOptions?.footprint) return next();
+    if (saveOptions?.footprint !== true) return next();
 
     if (document.isNew) {
       if (!options?.operations?.includes('create')) {
@@ -129,7 +129,7 @@ function generatePostSaveHook(options) {
     const saveOptions = document?.$__?.saveOptions;
 
     if (saveOptions?.footprint == null) saveOptions.footprint = true;
-    if (!saveOptions?.footprint) return next();
+    if (saveOptions?.footprint !== true) return next();
 
     if (document._wasNew) {
       if (!options?.operations?.includes('create')) {
@@ -188,7 +188,7 @@ function generatePreUpdateHook(options) {
 
     if (
       !options?.operations?.includes('update') ||
-      !queryObject?.options?.footprint
+      queryObject?.options?.footprint !== true
     ) {
       return next();
     }
@@ -213,7 +213,7 @@ function generatePostUpdateHook(options) {
 
     if (
       !options?.operations?.includes('update') ||
-      !queryObject?.options?.footprint
+      queryObject?.options?.footprint !== true
     ) {
       return next();
     }

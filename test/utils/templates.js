@@ -20,6 +20,7 @@ module.exports.getSampleDocument = () => {
     arrayField: ['hello', 'world'],
     arrayField2: ['hello', 'what', 'is', 'up'],
     fieldToRemove: 'Goodbye!',
+    fieldToRemove2: 'Bye Bye!',
     nestedField: {
       nestedName: 'What',
       nestedObject: {
@@ -84,7 +85,7 @@ module.exports.getUpdateToApply = () => {
       key1: 'value1 updated',
       key2: 'value2 updated',
     },
-    $unset: { fieldToRemove: '' },
+    $unset: { fieldToRemove: '', fieldToRemove2: '' },
   };
 };
 
@@ -171,6 +172,7 @@ module.exports.getCreateFootprint = (modelName = 'TestModel') => {
       arrayField: ['hello', 'world'],
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
+      fieldToRemove2: 'Bye Bye!',
       subDocumentField: {
         subDocumentString: "I'm in a subdocument",
         subDocumentNumber: 1000,
@@ -221,6 +223,7 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
       arrayField: ['hello', 'world'],
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
+      fieldToRemove2: 'Bye Bye!',
       subDocumentField: {
         subDocumentString: "I'm in a subdocument",
         subDocumentNumber: 1000,
@@ -295,9 +298,10 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
       "Updated subDocumentField.subDocumentNumber from '1000' to '1001'",
       "Updated mapField.key1 from 'value1' to 'value1 updated'",
       "Updated mapField.key2 from 'value2' to 'value2 updated'",
-      "Removed the field mapField.keyToRemove'",
+      'Removed the field mapField.keyToRemove',
       "Added a new field at newFieldToAdd with value 'Hey I'm new here'",
-      "Removed the field fieldToRemove'",
+      'Removed the field fieldToRemove',
+      'Removed the field fieldToRemove2',
     ],
     typeOfChange: 'Update',
     version: expect.anything(),
@@ -335,6 +339,7 @@ module.exports.getDeleteFootprint = (modelName = 'TestModel') => {
       arrayField: ['hello', 'world'],
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
+      fieldToRemove2: 'Bye Bye!',
       subDocumentField: {
         subDocumentString: "I'm in a subdocument",
         subDocumentNumber: 1000,

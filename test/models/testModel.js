@@ -35,6 +35,9 @@ function getSchema() {
     fieldToRemove: {
       type: String,
     },
+    fieldToRemove2: {
+      type: String,
+    },
     newFieldToAdd: {
       type: String,
     },

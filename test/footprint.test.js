@@ -75,6 +75,7 @@ describe('Logging Changes For All Supported Operations', () => {
       // updates using $ operator needs to be set manually
       doc.arrayField2 = ['hello', 'what', 'is', 'up', 'you'];
       doc.fieldToRemove = undefined;
+      doc.fieldToRemove2 = undefined;
 
       // to match the sequence of the object received
       const temp = updateFootprint.changes[0];

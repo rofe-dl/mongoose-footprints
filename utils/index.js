@@ -41,12 +41,8 @@ function findDifferenceInObjects(
     if (value == null) {
       // if no value exists for the new object, it was removed
       const newMessage = replaceFirstWord(message, `Removed the field`);
-      changesArray.push(newMessage + `${key}'`);
-
-      return;
-    }
-
-    if (key in originalObject) {
+      changesArray.push(newMessage + `${key}`);
+    } else if (key in originalObject) {
       let originalValue = originalObject[key];
 
       if (isObject(value) && isObject(originalValue)) {
@@ -68,7 +64,7 @@ function findDifferenceInObjects(
         );
       }
     } else {
-      //  what to do if key not in old document
+      //  if key not in old object, it was added
       if (isObject(value)) {
         findDifferenceInObjects(changesArray, value, {}, message + `${key}.`);
       } else {
