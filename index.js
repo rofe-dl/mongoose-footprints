@@ -9,20 +9,12 @@ const plugin = (schema, options = {}) => {
   // TODO: Readme docs about the finder methods
 
   if (!options?.operations) options.operations = ['update'];
-
-  // store documents in footprint by default
-  // otherwise if set to false by user manually, don't store
   if (options?.storeDocuments !== false) options.storeDocuments = true;
 
   // adding findById* operations is redundant because it already
-  // uses findOne* query internally by default but keeping for clarity
-  const updateOperations = ['findOneAndUpdate', 'findByIdAndUpdate'];
-  const deleteOperations = [
-    'findOneAndDelete',
-    'findOneAndRemove',
-    'findByIdAndDelete',
-    'findByIdAndRemove',
-  ];
+  // uses findOne* query internally by default
+  const updateOperations = ['findOneAndUpdate'];
+  const deleteOperations = ['findOneAndDelete', 'findOneAndRemove'];
 
   // Updates
   schema.pre(updateOperations, generatePreUpdateHook(options));
@@ -76,14 +68,16 @@ function generatePostDeleteHook(options) {
     }
 
     await createFootprint(
-      options,
-      queryObject?.model?.modelName,
-      [],
-      null,
-      docToObject(doc),
-      queryObject?.options?.session,
-      getUser(queryObject?.options, options),
-      'Delete'
+      generateFootprintObject(
+        options,
+        queryObject?.model?.modelName,
+        [],
+        null,
+        docToObject(doc),
+        getUser(queryObject?.options, options),
+        'Delete'
+      ),
+      queryObject?.options?.session
     );
 
     next();
@@ -137,14 +131,16 @@ function generatePostSaveHook(options) {
       }
 
       await createFootprint(
-        options,
-        document?.constructor?.modelName,
-        [],
-        docToObject(doc),
-        null,
-        saveOptions?.session,
-        getUser(saveOptions, options),
-        'Create'
+        generateFootprintObject(
+          options,
+          document?.constructor?.modelName,
+          [],
+          docToObject(doc),
+          null,
+          getUser(saveOptions, options),
+          'Create'
+        ),
+        saveOptions?.session
       );
     } else {
       if (!options?.operations?.includes('update')) {
@@ -161,13 +157,16 @@ function generatePostSaveHook(options) {
       );
 
       await createFootprint(
-        options,
-        document?.constructor?.modelName,
-        changesArray,
-        docToObject(doc),
-        docToObject(oldDocument),
-        saveOptions?.session,
-        getUser(saveOptions, options)
+        generateFootprintObject(
+          options,
+          document?.constructor?.modelName,
+          changesArray,
+          docToObject(doc),
+          docToObject(oldDocument),
+          getUser(saveOptions, options),
+          'Update'
+        ),
+        saveOptions?.session
       );
     }
 
@@ -227,26 +226,28 @@ function generatePostUpdateHook(options) {
     );
 
     await createFootprint(
-      options,
-      queryObject?.model?.modelName,
-      changesArray,
-      docToObject(doc),
-      docToObject(queryObject.oldDocument),
-      queryObject?.options?.session,
-      getUser(queryObject?.options, options)
+      generateFootprintObject(
+        options,
+        queryObject?.model?.modelName,
+        changesArray,
+        docToObject(doc),
+        docToObject(queryObject.oldDocument),
+        getUser(queryObject?.options, options),
+        'Update'
+      ),
+      queryObject?.options?.session
     );
 
     next();
   };
 }
 
-async function createFootprint(
+function generateFootprintObject(
   options,
   modelName,
   changesArray,
   newDocument,
   oldDocument,
-  session,
   user,
   type = 'Update'
 ) {
@@ -257,15 +258,11 @@ async function createFootprint(
     (type === 'Delete' && !oldDocument) ||
     (type === 'Create' && !newDocument)
   )
-    return;
+    return null;
 
-  const documentId = newDocument?._id ?? oldDocument?._id;
+  const documentId = newDocument?._id ?? oldDocument?._id ?? null;
 
-  const previous = await Footprint.findOne({ documentId, modelName }).sort(
-    '-version'
-  );
-
-  let newFootprint = {
+  return {
     modelName,
     documentId,
     oldDocument: options?.storeDocuments ? oldDocument : {},
@@ -273,14 +270,14 @@ async function createFootprint(
     user,
     changes: changesArray,
     typeOfChange: type,
-    version: previous ? previous.version + 1 : 1,
   };
+}
 
-  // if using options, we have to pass document in an array
-  // look at https://mongoosejs.com/docs/api.html#model_Model-create
-  if (session) newFootprint = [newFootprint];
+async function createFootprint(footprintObject, session) {
+  if (!footprintObject) return;
+  else if (!Array.isArray(footprintObject)) footprintObject = [footprintObject];
 
-  await Footprint.create(newFootprint, session ? { session } : null);
+  await Footprint.create(footprintObject, session ? { session } : null);
 }
 
 module.exports = {

@@ -13,7 +13,6 @@ const footprintSchema = new mongoose.Schema(
       enum: ['Create', 'Update', 'Delete'],
       default: 'Update',
     },
-    version: { type: Number, min: 1, default: 1 },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },

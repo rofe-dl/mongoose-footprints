@@ -188,7 +188,6 @@ module.exports.getCreateFootprint = (modelName = 'TestModel') => {
     user: 'System',
     changes: [],
     typeOfChange: 'Create',
-    version: expect.anything(),
     createdAt: expect.anything(),
   };
 };
@@ -304,7 +303,6 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
       'Removed the field fieldToRemove2',
     ],
     typeOfChange: 'Update',
-    version: expect.anything(),
     createdAt: expect.anything(),
   };
 };
@@ -356,7 +354,6 @@ module.exports.getDeleteFootprint = (modelName = 'TestModel') => {
     user: 'System',
     changes: [],
     typeOfChange: 'Delete',
-    version: expect.anything(),
     createdAt: expect.anything(),
   };
 };

@@ -137,7 +137,6 @@ await Book.findOneAndDelete(filter, {
     type: String,
     enum: ['Create', 'Update', 'Delete'],
     default: 'Update',
-  },
-  version: Number,
+  }
 }
 ```

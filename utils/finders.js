@@ -37,7 +37,7 @@ function get(
   }
 
   if (typeOfChange !== 'All') filter['typeOfChange'] = typeOfChange;
-  if (!options?.sort) options['sort'] = '-version';
+  if (!options?.sort) options['sort'] = '-createdAt';
 
   if (!callback) {
     return Footprint.find(filter, projection, options);
