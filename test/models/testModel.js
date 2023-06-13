@@ -73,6 +73,9 @@ function getSchema() {
       type: Map,
       of: String,
     },
+    unchangedField: {
+      type: String,
+    },
   });
 }
 

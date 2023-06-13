@@ -21,6 +21,7 @@ module.exports.getSampleDocument = () => {
     arrayField2: ['hello', 'what', 'is', 'up'],
     fieldToRemove: 'Goodbye!',
     fieldToRemove2: 'Bye Bye!',
+    unchangedField: 'Wont be edited',
     nestedField: {
       nestedName: 'What',
       nestedObject: {
@@ -111,6 +112,7 @@ module.exports.getUpdatedDocument = () => {
     objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4b'),
     arrayField: ['hello', 'world', 'extra', 'word'],
     arrayField2: ['hello', 'what', 'is', 'up', 'you'],
+    unchangedField: 'Wont be edited',
     newFieldToAdd: "Hey I'm new here",
     nestedField: {
       nestedName: 'Why',
@@ -173,6 +175,7 @@ module.exports.getCreateFootprint = (modelName = 'TestModel') => {
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
       fieldToRemove2: 'Bye Bye!',
+      unchangedField: 'Wont be edited',
       subDocumentField: {
         subDocumentString: "I'm in a subdocument",
         subDocumentNumber: 1000,
@@ -223,6 +226,7 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
       fieldToRemove2: 'Bye Bye!',
+      unchangedField: 'Wont be edited',
       subDocumentField: {
         subDocumentString: "I'm in a subdocument",
         subDocumentNumber: 1000,
@@ -263,6 +267,7 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
       objectIdField: new mongoose.Types.ObjectId('63f922f77800ea7bc335fe4b'),
       arrayField: ['hello', 'world', 'extra', 'word'],
       arrayField2: ['hello', 'what', 'is', 'up', 'you'],
+      unchangedField: 'Wont be edited',
       subDocumentField: {
         subDocumentString: 'What am I doing here',
         subDocumentNumber: 1001,
@@ -338,6 +343,7 @@ module.exports.getDeleteFootprint = (modelName = 'TestModel') => {
       arrayField2: ['hello', 'what', 'is', 'up'],
       fieldToRemove: 'Goodbye!',
       fieldToRemove2: 'Bye Bye!',
+      unchangedField: 'Wont be edited',
       subDocumentField: {
         subDocumentString: "I'm in a subdocument",
         subDocumentNumber: 1000,
