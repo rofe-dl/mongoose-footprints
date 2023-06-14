@@ -2,11 +2,9 @@ const Footprint = require('./models/footprintModel');
 const { docToObject, getUser, findDifferenceInObjects } = require('./utils');
 
 const plugin = (schema, options = {}) => {
-  // TODO: Test case if document not found
-  // TODO: Test adding a subdocument if wasn't there originally
-  // TODO: Give screenshots of the result in README
-  // TODO: Test if unit tests actually work by changing template objects and code
-  // TODO: Readme docs about the finder methods
+  // TODO: Refine how array changes are logged using hashing
+  // TODO: Extra test cases to check nested fieldToRemove
+  // TODO: Log changes in array up to a certain length, otherwise show generic message
 
   if (!options?.operations) options.operations = ['update'];
   if (options?.storeDocuments !== false) options.storeDocuments = true;
@@ -19,6 +17,8 @@ const plugin = (schema, options = {}) => {
   // Updates
   schema.pre(updateOperations, generatePreUpdateHook(options));
   schema.post(updateOperations, generatePostUpdateHook(options));
+  // schema.pre('updateMany', generatePreUpdateManyHook(options));
+  // schema.post('updateMany', generatePostUpdateManyHook(options));
 
   // Creates (when isNew == true) and Updates (when isNew == false)
   schema.pre('save', generatePreSaveHook(options));
@@ -173,6 +173,76 @@ function generatePostSaveHook(options) {
     next();
   };
 }
+
+// function generatePreUpdateManyHook(options) {
+//   return async function (next) {
+//     // 'this' refers to Query object
+//     // https://mongoosejs.com/docs/middleware.html#types-of-middleware
+//     const queryObject = this;
+//     if (queryObject?.options?.footprint == null)
+//       queryObject.options.footprint = true;
+
+//     if (
+//       !options?.operations?.includes('update') ||
+//       queryObject?.options?.footprint !== true
+//     ) {
+//       return next();
+//     }
+
+//     queryObject.oldDocuments = await queryObject
+//       .clone()
+//       .find(queryObject.getFilter());
+
+//     next();
+//   };
+// }
+
+// function generatePostUpdateManyHook(options) {
+//   return async function (doc, next) {
+//     const queryObject = this;
+//     if (queryObject?.options?.footprint == null)
+//       queryObject.options.footprint = true;
+
+//     if (
+//       !options?.operations?.includes('update') ||
+//       queryObject?.options?.footprint !== true
+//     ) {
+//       return next();
+//     }
+
+//     const updatedDocuments = await queryObject
+//       .clone()
+//       .find(queryObject.getFilter());
+
+//     const footprints = [];
+
+//     for (let i = 0; i < updatedDocuments.length; i++) {
+//       let changesArray = [];
+
+//       findDifferenceInObjects(
+//         changesArray,
+//         docToObject(updatedDocuments[i]),
+//         docToObject(queryObject.oldDocuments[i])
+//       );
+
+//       footprints.push(
+//         generateFootprintObject(
+//           options,
+//           queryObject?.model?.modelName,
+//           changesArray,
+//           docToObject(updatedDocuments[i]),
+//           docToObject(queryObject.oldDocuments[i]),
+//           getUser(queryObject?.options, options),
+//           'Update'
+//         )
+//       );
+//     }
+
+//     await createFootprint(footprints, queryObject?.options?.session);
+
+//     next();
+//   };
+// }
 
 function generatePreUpdateHook(options) {
   return async function (next) {

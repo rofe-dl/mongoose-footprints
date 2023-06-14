@@ -1,6 +1,6 @@
 # Mongoose Footprints
 
-A mongoose plugin to log changes in MongoDB documents. If used on Mongoose models, any changes made to that model will be logged as a document of the `_Footprint` model. It will include contain an array that shows every change made to the document, along with the old and new document bodies.
+A mongoose plugin to log changes in MongoDB documents made using `mongoose` methods. If used on Mongoose models, any changes made to that model will be logged as a document of the `_Footprint` model. It will contain an array that shows every change made to the document, along with the old and new document bodies.
 
 Changes in referenced/populated documents will not be logged unless the referenced Object ID changes entirely to a different one. However changes in nested documents or subdocuments will be logged.
 
@@ -22,6 +22,8 @@ Currently it supports the following operations:
   - `findByIdAndRemove`
 
 Note: The update operations will set `new: true` as the default so the returned object will always be the updated object.
+
+![Example document](./image.png)
 
 ## Get Started
 
@@ -54,7 +56,7 @@ bookSchema.plugin(footprints.plugin, options);
 const Book = mongoose.model('Book', bookSchema);
 ```
 
-Possible plugin options you can pass are given below. It is passed as an object.
+Possible plugin options you can pass are given below. They are passed inside an object.
 
 ### Plugin Options
 
@@ -123,6 +125,23 @@ await Book.findOneAndDelete(filter, {
 });
 ```
 
+## Finder Methods
+
+There are also some utility methods that can be used to query for footprints. The parameters are similar to that of the `find()` method of mongoose:
+
+- getFootprints(filter, projection, options, callback)
+- getCreations(filter, projection, options, callback)
+- getDeletions(filter, projection, options, callback)
+- getUpdates(filter, projection, options, callback)
+
+### Example Usage
+
+```js
+const footprints = require('mongoose-footprints');
+
+await footprint.getFootprints({ documentId: doc._id });
+```
+
 ## Footprint Model
 
 ```js
@@ -140,3 +159,8 @@ await Book.findOneAndDelete(filter, {
   }
 }
 ```
+
+## Future Plans
+
+- Not satisfied with how changes in arrays are documented. I have plans to make the logging much more extensive for this kind of data type.
+- Test cases don't cover all sorts of scenarios at the moment, so I'll need to think of more. Currently only the core features are covered.
