@@ -176,6 +176,34 @@ describe('Logging Changes For All Supported Operations', () => {
   );
 });
 
+describe('Possible edge cases', () => {
+  it(
+    'successfully logs adding a new subdocument field',
+    autocatch(async (done) => {
+      const sampleDocument = getSampleDocument();
+      delete sampleDocument.subDocumentField;
+
+      let doc = await TestModel.create(sampleDocument);
+      let updatedDoc = await TestModel.findOneAndUpdate(
+        { _id: doc._id },
+        getUpdateToApply(),
+        { new: true }
+      );
+
+      let fp = (await footprint.getFootprints({ documentId: doc._id }))[0];
+
+      expect(toJson(fp).changes).toContain(
+        "Added a new field at subDocumentField.subDocumentString with value 'What am I doing here'"
+      );
+      expect(toJson(fp).changes).toContain(
+        "Added a new field at subDocumentField.subDocumentNumber with value '1001'"
+      );
+
+      done();
+    })
+  );
+});
+
 function toJson(doc) {
   return doc?.toJSON({ flattenMaps: true });
 }
