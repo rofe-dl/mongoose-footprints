@@ -53,11 +53,22 @@ function findDifferenceInObjects(
           message + `${key}.`
         );
       } else if (!isEqual(value, originalValue)) {
-        if (isObject(originalValue) || Array.isArray(originalValue))
+        if (Array.isArray(originalValue) && Array.isArray(value)) {
+          if (originalValue.length > value.length)
+            changesArray.push(message + `${key} by removing element(s)`);
+          else if (originalValue.length < value.length) {
+            changesArray.push(message + `${key} by adding element(s)`);
+          } else {
+            changesArray.push(message + `${key} by replacing element(s)`);
+          }
+
+          continue;
+        }
+
+        if (isObject(originalValue))
           originalValue = JSON.stringify(originalValue);
 
-        if (isObject(value) || Array.isArray(value))
-          value = JSON.stringify(value);
+        if (isObject(value)) value = JSON.stringify(value);
 
         changesArray.push(
           message + `${key} from '${originalValue}' to '${value}'`
@@ -69,9 +80,9 @@ function findDifferenceInObjects(
         findDifferenceInObjects(changesArray, value, {}, message + `${key}.`);
       } else {
         const newMessage = replaceFirstWord(message, `Added a new field at`);
-        if (Array.isArray(value)) value = JSON.stringify(value);
-
-        changesArray.push(newMessage + `${key} with value '${value}'`);
+        if (Array.isArray(value)) {
+          changesArray.push(newMessage + `${key} as an array`);
+        } else changesArray.push(newMessage + `${key} with value '${value}'`);
       }
     }
   }

@@ -281,8 +281,8 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
     changes: [
       "Updated nestedField.nestedObject.nestedNumber from '100' to '101'",
       "Updated nestedField.nestedName from 'What' to 'Why'",
-      "Updated nestedField.nestedNumbers from '[20,30,40]' to '[21,31,41]'",
-      `Updated nestedField.nestedObjects from '[{"doubleNestedNum":50,"doubleNestedString":"How are you"}]' to '[{"doubleNestedNum":60,"doubleNestedString":"How are you"},{"doubleNestedNum":50,"doubleNestedString":"Why are you"}]'`,
+      'Updated nestedField.nestedNumbers by replacing element(s)',
+      'Updated nestedField.nestedObjects by adding element(s)',
       "Updated stringField from 'Hello' to 'Updated Hello'",
       "Updated numberField from '10' to '11'",
       "Updated dateField from '" +
@@ -296,8 +296,8 @@ module.exports.getUpdateFootprint = (modelName = 'TestModel') => {
       "Updated bufferField2.position from '13' to '21'",
       "Updated booleanField from 'true' to 'false'",
       "Updated objectIdField from '63f922f77800ea7bc335fe4a' to '63f922f77800ea7bc335fe4b'",
-      `Updated arrayField from '["hello","world"]' to '["hello","world","extra","word"]'`,
-      `Updated arrayField2 from '["hello","what","is","up"]' to '["hello","what","is","up","you"]'`,
+      `Updated arrayField by adding element(s)`,
+      `Updated arrayField2 by adding element(s)`,
       "Updated subDocumentField.subDocumentString from 'I'm in a subdocument' to 'What am I doing here'",
       "Updated subDocumentField.subDocumentNumber from '1000' to '1001'",
       "Updated mapField.key1 from 'value1' to 'value1 updated'",
