@@ -1,4 +1,5 @@
 test/
 .prettierrc
-image.npg
+image.png
 config.env
+.vscode
